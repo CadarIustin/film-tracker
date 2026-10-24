@@ -20,6 +20,13 @@ const api = {
 
         return response.json();
     },
+
+    async deleteTitle(id) {
+        const response = await fetch(`/api/titles/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            throw new Error(`Could not delete the title (status ${response.status}).`);
+        }
+    },
 };
 
 const typeLabels = { film: 'Film', series: 'Series' };
@@ -33,7 +40,7 @@ function renderTitles(titles) {
 
     if (titles.length === 0) {
         const cell = titleList.insertRow().insertCell();
-        cell.colSpan = 4;
+        cell.colSpan = 5;
         cell.textContent = 'No titles yet.';
         return;
     }
@@ -44,6 +51,11 @@ function renderTitles(titles) {
         row.insertCell().textContent = typeLabels[title.type];
         row.insertCell().textContent = title.year;
         row.insertCell().textContent = title.watched ? 'Yes' : 'No';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => handleDelete(title));
+        row.insertCell().append(deleteButton);
     }
 }
 
@@ -60,6 +72,19 @@ async function loadTitles() {
     hideError();
     try {
         renderTitles(await api.getTitles());
+    } catch (error) {
+        showError(error.message);
+    }
+}
+
+async function handleDelete(title) {
+    if (!confirm(`Delete "${title.name}"?`)) {
+        return;
+    }
+
+    try {
+        await api.deleteTitle(title.id);
+        await loadTitles();
     } catch (error) {
         showError(error.message);
     }
