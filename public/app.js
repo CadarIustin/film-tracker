@@ -26,8 +26,6 @@ const api = {
         if (!response.ok) {
             throw new Error(`Could not add the title (status ${response.status}).`);
         }
-
-        return response.json();
     },
 
     async updateWatched(id, watched) {
@@ -39,8 +37,6 @@ const api = {
         if (!response.ok) {
             throw new Error(`Could not update the title (status ${response.status}).`);
         }
-
-        return response.json();
     },
 
     async deleteTitle(id) {
