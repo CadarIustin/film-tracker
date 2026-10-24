@@ -23,4 +23,10 @@ class TitleRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['id' => 'DESC']);
     }
+
+    public function save(Title $title): void
+    {
+        $this->getEntityManager()->persist($title);
+        $this->getEntityManager()->flush();
+    }
 }
