@@ -38,6 +38,12 @@ class Title implements \JsonSerializable
         $this->watched = $watched;
     }
 
+    // The only setter: a bool can never hold an invalid value, so the entity stays always-valid.
+    public function setWatched(bool $watched): void
+    {
+        $this->watched = $watched;
+    }
+
     // json_encode() calls this, so the JSON shape of a title is defined only here.
     public function jsonSerialize(): array
     {

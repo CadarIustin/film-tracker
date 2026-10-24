@@ -41,6 +41,25 @@ class TitleController extends AbstractController
         return $this->json($title, Response::HTTP_CREATED);
     }
 
+    #[Route('/api/titles/{id}', name: 'api_title_update_watched', methods: ['PATCH'])]
+    public function updateWatched(Title $title, Request $request): JsonResponse
+    {
+        $watched = $request->toArray()['watched'] ?? null;
+        // Without this check, PHP would silently turn "yes" into true, and a missing value would cause a 500.
+        if (!is_bool($watched)) {
+            return $this->json(
+                ['errors' => ['watched' => 'Watched must be true or false.']],
+                Response::HTTP_BAD_REQUEST,
+            );
+        }
+
+        $title->setWatched($watched);
+        // Doctrine already tracks this Title, so save() runs an UPDATE instead of an INSERT.
+        $this->titleRepository->save($title);
+
+        return $this->json($title);
+    }
+
     // Symfony loads the Title by {id} before this runs, and answers 404 if it does not exist.
     #[Route('/api/titles/{id}', name: 'api_title_delete', methods: ['DELETE'])]
     public function delete(Title $title): Response

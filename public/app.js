@@ -23,6 +23,19 @@ const api = {
         return response.json();
     },
 
+    async updateWatched(id, watched) {
+        const response = await fetch(`/api/titles/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ watched }),
+        });
+        if (!response.ok) {
+            throw new Error(`Could not update the title (status ${response.status}).`);
+        }
+
+        return response.json();
+    },
+
     async deleteTitle(id) {
         const response = await fetch(`/api/titles/${id}`, { method: 'DELETE' });
         if (!response.ok) {
@@ -53,7 +66,14 @@ function renderTitles(titles) {
         row.insertCell().textContent = title.name;
         row.insertCell().textContent = typeLabels[title.type];
         row.insertCell().textContent = title.year;
-        row.insertCell().textContent = title.watched ? 'Yes' : 'No';
+
+        const watchedCheckbox = document.createElement('input');
+        watchedCheckbox.type = 'checkbox';
+        watchedCheckbox.checked = title.watched;
+        // The checkbox has no visible text, so screen readers need this label.
+        watchedCheckbox.setAttribute('aria-label', `Watched: ${title.name}`);
+        watchedCheckbox.addEventListener('change', () => handleWatchedChange(title, watchedCheckbox));
+        row.insertCell().append(watchedCheckbox);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
@@ -78,6 +98,20 @@ async function loadTitles() {
     try {
         renderTitles(await api.getTitles());
     } catch (error) {
+        showError(error.message);
+    }
+}
+
+async function handleWatchedChange(title, checkbox) {
+    // Blocks a second click while the first request is still running.
+    checkbox.disabled = true;
+
+    try {
+        await api.updateWatched(title.id, checkbox.checked);
+        await loadTitles();
+    } catch (error) {
+        // The checkbox already flipped in the browser, so reload to show the real state again.
+        await loadTitles();
         showError(error.message);
     }
 }

@@ -29,6 +29,7 @@ open while you use the app; closing it stops the server.
 |---|---|---|---|
 | GET | `/api/titles` | List all titles, newest first | 200 with a JSON array |
 | POST | `/api/titles` | Add a title | 201 with the new title |
+| PATCH | `/api/titles/{id}` | Switch "watched" on or off, body `{"watched": true}` | 200 with the updated title, 400 if `watched` is not `true` or `false`, 404 if the id does not exist |
 | DELETE | `/api/titles/{id}` | Delete a title | 204, or 404 if the id does not exist |
 
 Example body for POST (`watched` is optional and defaults to `false`):
@@ -45,7 +46,7 @@ Example body for POST (`watched` is optional and defaults to `false`):
   arguments, so a title can never exist half-filled. `jsonSerialize()` defines
   the JSON shape in one place.
 - `src/Repository/TitleRepository.php`: every database read and write.
-- `src/Controller/TitleController.php`: the three API endpoints. It only reads
+- `src/Controller/TitleController.php`: the API endpoints. It only reads
   the request, calls the repository and returns JSON.
 - `public/index.html` and `public/app.js`: the frontend. All `fetch` calls live
   in one `api` object, and after every change the list is reloaded from the API.
@@ -56,6 +57,7 @@ Example body for POST (`watched` is optional and defaults to `false`):
 - API endpoints to list, add and delete titles
 - A web page that shows the list, adds titles with a form and deletes titles
   (after a confirmation)
+- Extra: a checkbox on each row to switch "watched" on or off
 
 ## What is not finished (yet)
 
@@ -65,8 +67,7 @@ Example body for POST (`watched` is optional and defaults to `false`):
   check the input yet.
 - Opening `http://localhost:8000/` shows a Symfony 404 page; the app is at
   `/index.html`.
-- The extras from the assignment. Planned next: validation, a watched toggle,
-  filters and a test.
+- More extras from the assignment. Planned next: filters, validation and a test.
 
 ## Problems I ran into
 
