@@ -20,8 +20,8 @@ php bin/console doctrine:migrations:migrate --no-interaction
 php -S localhost:8000 -t public/
 ```
 
-Then open **http://localhost:8000/index.html**. Keep the terminal with the server
-open while you use the app; closing it stops the server.
+Then open **http://localhost:8000**. Keep the terminal with the server open while
+you use the app; closing it stops the server.
 
 The packages themselves (`vendor/`) are not in git; `composer install` downloads
 them. I did commit `composer.json` and `composer.lock` on purpose: the lock file
@@ -67,6 +67,7 @@ year, so "Dune" (1984) and "Dune" (2021) can both be on the list.
 - `src/Repository/TitleRepository.php`: every database read and write.
 - `src/Controller/TitleController.php`: the API endpoints. It only reads
   the request, calls the repository and returns JSON.
+- `src/Controller/HomeController.php`: sends `/` to the page.
 - `public/index.html` and `public/app.js`: the frontend. All `fetch` calls live
   in one `api` object, and after every change the list is reloaded from the API.
 
@@ -104,8 +105,6 @@ small page.
 
 ## What is not finished (yet)
 
-- Opening `http://localhost:8000/` shows a Symfony 404 page; the app is at
-  `/index.html`.
 - The duplicate check happens in the code. With many users at the same time, two
   identical requests could still both get through, so a real multi-user app would
   also need a unique constraint in the database. For a personal list that is not
@@ -119,7 +118,8 @@ small page.
 - The page first showed `ERR_CONNECTION_REFUSED` because the PHP server was not
   running. It has to keep running in its own terminal.
 - PHP's built-in server sends `/` to Symfony's `index.php` before it looks for
-  `index.html`, so the page is opened at `/index.html`.
+  `index.html`, so opening the start URL showed Symfony's welcome page instead of
+  the app. I added a small redirect from `/` to `/index.html`.
 - While testing, I could add a film with the year -1, because neither the form
   nor the API checked the year. That is why I added validation before the other
   extras.
