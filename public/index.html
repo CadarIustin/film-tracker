@@ -8,11 +8,35 @@
         body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
         table { width: 100%; border-collapse: collapse; }
         th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+        form { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 1.5rem; }
         .error { color: #b00020; }
     </style>
 </head>
 <body>
     <h1>Film and Series Tracker</h1>
+
+    <form id="title-form">
+        <label>
+            Name
+            <input name="name" required maxlength="255">
+        </label>
+        <label>
+            Type
+            <select name="type">
+                <option value="film">Film</option>
+                <option value="series">Series</option>
+            </select>
+        </label>
+        <label>
+            Year
+            <input name="year" type="number" required>
+        </label>
+        <label>
+            <input name="watched" type="checkbox">
+            Watched
+        </label>
+        <button type="submit">Add</button>
+    </form>
 
     <p id="error-message" class="error" hidden></p>
 
