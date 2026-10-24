@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class TitleController extends AbstractController
 {
+    // Every action needs the repository, so autowiring injects it once, here.
     public function __construct(private readonly TitleRepository $titleRepository)
     {
     }
@@ -26,6 +27,7 @@ class TitleController extends AbstractController
     #[Route('/api/titles', name: 'api_title_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
+        // Invalid JSON makes toArray() throw, and Symfony answers that with a 400.
         $data = $request->toArray();
 
         $title = new Title(
@@ -39,11 +41,13 @@ class TitleController extends AbstractController
         return $this->json($title, Response::HTTP_CREATED);
     }
 
+    // Symfony loads the Title by {id} before this runs, and answers 404 if it does not exist.
     #[Route('/api/titles/{id}', name: 'api_title_delete', methods: ['DELETE'])]
     public function delete(Title $title): Response
     {
         $this->titleRepository->remove($title);
 
+        // A 204 response must not have a body, so this is a plain Response and not JSON.
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 }

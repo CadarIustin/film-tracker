@@ -23,6 +23,7 @@
         <label>
             Type
             <select name="type">
+                <!-- The values must match the TitleType enum on the server. -->
                 <option value="film">Film</option>
                 <option value="series">Series</option>
             </select>
@@ -53,6 +54,7 @@
         <tbody id="title-list"></tbody>
     </table>
 
+    <!-- At the end of body, so the elements above already exist when app.js runs. -->
     <script src="app.js"></script>
 </body>
 </html>

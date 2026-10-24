@@ -26,6 +26,7 @@ class TitleRepository extends ServiceEntityRepository
 
     public function save(Title $title): void
     {
+        // persist() only starts tracking the object; flush() is what actually runs the SQL.
         $this->getEntityManager()->persist($title);
         $this->getEntityManager()->flush();
     }

@@ -1,6 +1,8 @@
+// Every HTTP call lives in this object, so the rest of the file never calls fetch() directly.
 const api = {
     async getTitles() {
         const response = await fetch('/api/titles');
+        // fetch() only fails on network errors, not on a 404 or 500, so the status is checked here.
         if (!response.ok) {
             throw new Error(`Could not load titles (status ${response.status}).`);
         }
@@ -47,6 +49,7 @@ function renderTitles(titles) {
 
     for (const title of titles) {
         const row = titleList.insertRow();
+        // textContent, never innerHTML: a name like "<script>" is shown as text instead of being run.
         row.insertCell().textContent = title.name;
         row.insertCell().textContent = typeLabels[title.type];
         row.insertCell().textContent = title.year;
@@ -54,6 +57,7 @@ function renderTitles(titles) {
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
+        // The arrow function remembers this row's title, so each button deletes its own title.
         deleteButton.addEventListener('click', () => handleDelete(title));
         row.insertCell().append(deleteButton);
     }
@@ -68,6 +72,7 @@ function hideError() {
     errorMessage.hidden = true;
 }
 
+// Called after every change, so the page always shows what the server has.
 async function loadTitles() {
     hideError();
     try {
@@ -91,6 +96,7 @@ async function handleDelete(title) {
 }
 
 titleForm.addEventListener('submit', async (event) => {
+    // Without this, the browser would submit the form the old way and reload the page.
     event.preventDefault();
     const formData = new FormData(titleForm);
 
@@ -98,7 +104,9 @@ titleForm.addEventListener('submit', async (event) => {
         await api.createTitle({
             name: formData.get('name'),
             type: formData.get('type'),
+            // Form values are always strings, but the API expects the year as a number.
             year: Number(formData.get('year')),
+            // An unticked checkbox is left out of the form data completely.
             watched: formData.has('watched'),
         });
         titleForm.reset();
