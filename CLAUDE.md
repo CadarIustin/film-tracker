@@ -2,7 +2,7 @@
 
 A code challenge: a personal watchlist for films and series, with a 6-hour hard limit.
 I'm being assessed on how I learn and think, so I must understand and be able to
-explain every line in this project.
+explain every line in this project and every decision I had.
 
 ## Stack
 - PHP 8.4+, Symfony (see composer.json for the exact version), Doctrine ORM
@@ -13,7 +13,7 @@ explain every line in this project.
 ## How to work with me
 - Explain before you write code. Keep each change small enough that I can read and
   understand it in one go.
-- Don't build whole features at once. Work in steps that each fit in one commit.
+- In the case that you build something, don't build whole features at once. Work in steps that each fit in one commit.
 - If you're not sure something works in this Symfony version, say so and point me
   to the Symfony docs.
 - Tell me when I'm making a mistake or overcomplicating something.
