@@ -23,6 +23,11 @@ php -S localhost:8000 -t public/
 Then open **http://localhost:8000/index.html**. Keep the terminal with the server
 open while you use the app; closing it stops the server.
 
+The packages themselves (`vendor/`) are not in git; `composer install` downloads
+them. I did commit `composer.json` and `composer.lock` on purpose: the lock file
+holds the exact versions I tested with, so everyone who runs the project gets the
+same ones.
+
 ## API
 
 | Method | Path | What it does | Response |
@@ -64,6 +69,26 @@ year, so "Dune" (1984) and "Dune" (2021) can both be on the list.
   the request, calls the repository and returns JSON.
 - `public/index.html` and `public/app.js`: the frontend. All `fetch` calls live
   in one `api` object, and after every change the list is reloaded from the API.
+
+## Tests
+
+```bash
+php bin/console --env=test doctrine:migrations:migrate --no-interaction
+php bin/phpunit
+```
+
+The first command is only needed once. It creates a separate test database,
+`var/data_test.db`, so the tests never touch the data in the app.
+
+I decided to test every rule once instead of writing as many tests as possible: a
+test should protect a rule, not raise a number. Most of the logic lives in the
+controller and the repository, so most tests run against the real test database
+and send requests the same way the page does. Only the `Title` entity is tested on
+its own, because it does not need the framework.
+
+The JavaScript has no automated tests; I tested the page by hand in the browser.
+Testing it automatically would have needed a second set of tools (Node.js) for one
+small page.
 
 ## What is finished
 
