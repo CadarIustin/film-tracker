@@ -225,7 +225,7 @@ in `CLAUDE.md`: explain every change first, work in small steps of one commit
 each, and ask me before adding packages, changing the database or deleting files. I always work like this for every project that I so that I always in control.
 After every step it gave me my progress in percent so that I know where I am at.
 
-I used it to plan the steps and to have an opinion if my aproaches are goodI used ai for generating the boiler plate i also used ai for generating the database and filling it with dummy data for me to test my project, to check for the problems I found while testing : the year -1, the
+I used it to plan the steps and to have an opinion if my aproaches are good. I used ai for generating the boiler plate i also used ai for generating the database and filling it with dummy data for me to test my project, to check for the problems I found while testing : the year -1, the
 duplicate Dune, the empty page at `/index.html/`, also because I did not had any mentioned linters I used ai as a linter and to see if my README.md was updated corectly for each of my steps.
 
 ## Time log
@@ -251,5 +251,5 @@ Based on my commit times. The setup before my first commit is an estimate.
 | Tests: setup and unit tests | 33 min |
 | Tests: repository and API tests | 28 min |
 | Start page redirect and script path fix | 10 min |
-| Final check, cleanup, final README | ~30 min |
-| **Total** | **~5 h 31 min** |
+| Final check, cleanup, final README | 54 min |
+| **Total** | **~5 h 55 min** |
