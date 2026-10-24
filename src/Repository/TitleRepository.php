@@ -29,4 +29,10 @@ class TitleRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($title);
         $this->getEntityManager()->flush();
     }
+
+    public function remove(Title $title): void
+    {
+        $this->getEntityManager()->remove($title);
+        $this->getEntityManager()->flush();
+    }
 }

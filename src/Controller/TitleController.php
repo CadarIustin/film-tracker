@@ -38,4 +38,12 @@ class TitleController extends AbstractController
 
         return $this->json($title, Response::HTTP_CREATED);
     }
+
+    #[Route('/api/titles/{id}', name: 'api_title_delete', methods: ['DELETE'])]
+    public function delete(Title $title): Response
+    {
+        $this->titleRepository->remove($title);
+
+        return new Response(null, Response::HTTP_NO_CONTENT);
+    }
 }
