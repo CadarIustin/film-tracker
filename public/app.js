@@ -16,6 +16,10 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(title),
         });
+        if (response.status === 400) {
+            const { errors } = await response.json();
+            throw new Error(Object.values(errors).join(' '));
+        }
         if (!response.ok) {
             throw new Error(`Could not add the title (status ${response.status}).`);
         }
@@ -49,6 +53,10 @@ const typeLabels = { film: 'Film', series: 'Series' };
 const titleForm = document.getElementById('title-form');
 const titleList = document.getElementById('title-list');
 const errorMessage = document.getElementById('error-message');
+
+// The highest allowed year moves with the calendar, so it is set here instead of in the HTML.
+// It matches YEARS_AHEAD in TitleController.
+titleForm.elements.year.max = new Date().getFullYear() + 5;
 
 function renderTitles(titles) {
     titleList.replaceChildren();
