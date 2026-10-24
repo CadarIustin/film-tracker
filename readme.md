@@ -128,6 +128,10 @@ small page.
   watch, and with two copies it is unclear whether I have watched it, because one
   could be ticked and the other not. So I added a duplicate check: the same name,
   type and year is refused, but a remake with another year is still allowed.
+- When I opened `/index.html/` (with a slash at the end), the page stayed empty.
+  The browser looked for the script at `/index.html/app.js`, and the server sent
+  the HTML page back instead of the JavaScript, so none of it ran. Loading the
+  script from `/app.js`, with a leading slash, fixed it.
 
 ## Time log
 
