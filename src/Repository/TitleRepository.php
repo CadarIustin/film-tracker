@@ -15,4 +15,12 @@ class TitleRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Title::class);
     }
+
+    /**
+     * @return Title[]
+     */
+    public function findAllNewestFirst(): array
+    {
+        return $this->findBy([], ['id' => 'DESC']);
+    }
 }

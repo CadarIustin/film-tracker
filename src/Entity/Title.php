@@ -7,7 +7,7 @@ use App\Repository\TitleRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TitleRepository::class)]
-class Title
+class Title implements \JsonSerializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -32,5 +32,16 @@ class Title
         $this->type = $type;
         $this->year = $year;
         $this->watched = $watched;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'type' => $this->type->value,
+            'year' => $this->year,
+            'watched' => $this->watched,
+        ];
     }
 }
