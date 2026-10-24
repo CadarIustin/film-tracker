@@ -18,7 +18,8 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(title),
         });
-        if (response.status === 400) {
+        // 400 (invalid input) and 409 (duplicate) both come with messages meant for the user.
+        if (response.status === 400 || response.status === 409) {
             const { errors } = await response.json();
             throw new Error(Object.values(errors).join(' '));
         }

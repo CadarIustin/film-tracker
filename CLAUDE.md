@@ -43,7 +43,7 @@ explain every line in this project.
 - One JSON shape: `Title` implements `\JsonSerializable`, and every endpoint returns
   titles through it.
 - REST routes: `/api/titles` and `/api/titles/{id}`, with status codes 200 (read),
-  201 (created), 204 (deleted), 400 (bad input) and 404 (unknown id).
+  201 (created), 204 (deleted), 400 (bad input), 404 (unknown id) and 409 (duplicate).
 - Frontend: all `fetch` calls live in one `api` object in `app.js`; render functions
   only touch the DOM. After every change, reload the list from the API so the
   server stays the single source of truth.

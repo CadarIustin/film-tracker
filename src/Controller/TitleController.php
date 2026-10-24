@@ -46,12 +46,17 @@ class TitleController extends AbstractController
             return $this->json(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
-        $title = new Title(
-            trim($data['name']),
-            TitleType::from($data['type']),
-            $data['year'],
-            $data['watched'] ?? false,
-        );
+        $name = trim($data['name']);
+        $type = TitleType::from($data['type']);
+        // Same name, type and year is the same title; a remake has another year, so it is still allowed.
+        if ($this->titleRepository->existsWithNameTypeAndYear($name, $type, $data['year'])) {
+            return $this->json(
+                ['errors' => ['name' => 'This title is already on your list.']],
+                Response::HTTP_CONFLICT,
+            );
+        }
+
+        $title = new Title($name, $type, $data['year'], $data['watched'] ?? false);
         $this->titleRepository->save($title);
 
         return $this->json($title, Response::HTTP_CREATED);

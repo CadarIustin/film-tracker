@@ -41,6 +41,22 @@ class TitleRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
+    public function existsWithNameTypeAndYear(string $name, TitleType $type, int $year): bool
+    {
+        $count = $this->createQueryBuilder('title')
+            ->select('COUNT(title.id)')
+            ->andWhere('LOWER(title.name) = :name')
+            ->andWhere('title.type = :type')
+            ->andWhere('title.year = :year')
+            ->setParameter('name', mb_strtolower(trim($name)))
+            ->setParameter('type', $type)
+            ->setParameter('year', $year)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $count > 0;
+    }
+
     public function save(Title $title): void
     {
         // persist() only starts tracking the object; flush() is what actually runs the SQL.

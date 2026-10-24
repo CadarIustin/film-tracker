@@ -28,7 +28,7 @@ open while you use the app; closing it stops the server.
 | Method | Path | What it does | Response |
 |---|---|---|---|
 | GET | `/api/titles` | List titles, newest first. Optional filters: `?type=film` or `series`, `?watched=true` or `false`, `?search=dun` (part of the name, not case-sensitive) | 200 with a JSON array, 400 if a filter value is invalid |
-| POST | `/api/titles` | Add a title | 201 with the new title, 400 with error messages if the input is invalid |
+| POST | `/api/titles` | Add a title | 201 with the new title, 400 with error messages if the input is invalid, 409 if the same title is already on the list |
 | PATCH | `/api/titles/{id}` | Switch "watched" on or off, body `{"watched": true}` | 200 with the updated title, 400 if `watched` is not `true` or `false`, 404 if the id does not exist |
 | DELETE | `/api/titles/{id}` | Delete a title | 204, or 404 if the id does not exist |
 
@@ -47,6 +47,10 @@ field, for example `{"errors": {"year": "The year must be a whole number from 19
 - `year`: a whole number from 1900 up to five years after the current year,
   because a watchlist can also hold titles that are announced but not out yet.
 - `watched`: optional, `true` or `false`.
+
+A title with the same name (ignoring upper and lower case), type and year as one
+that is already on the list is refused with 409 Conflict. A remake has another
+year, so "Dune" (1984) and "Dune" (2021) can both be on the list.
 
 ## How it is built
 
@@ -71,11 +75,16 @@ field, for example `{"errors": {"year": "The year must be a whole number from 19
 - Extra: input validation on the server, with the same limits in the form
 - Extra: filters (type and watched) and a search on the name. The filtering
   happens in the database query, not in the browser.
+- Extra: a duplicate check, so the same title cannot be added twice.
 
 ## What is not finished (yet)
 
 - Opening `http://localhost:8000/` shows a Symfony 404 page; the app is at
   `/index.html`.
+- The duplicate check happens in the code. With many users at the same time, two
+  identical requests could still both get through, so a real multi-user app would
+  also need a unique constraint in the database. For a personal list that is not
+  needed.
 - More extras from the assignment. Planned next: a test.
 
 ## Problems I ran into
@@ -89,6 +98,11 @@ field, for example `{"errors": {"year": "The year must be a whole number from 19
 - While testing, I could add a film with the year -1, because neither the form
   nor the API checked the year. That is why I added validation before the other
   extras.
+- While testing the filters, I noticed I could add the same Dune twice. In a
+  personal watchlist that makes no sense: one entry stands for one thing to
+  watch, and with two copies it is unclear whether I have watched it, because one
+  could be ticked and the other not. So I added a duplicate check: the same name,
+  type and year is refused, but a remake with another year is still allowed.
 
 ## Time log
 
