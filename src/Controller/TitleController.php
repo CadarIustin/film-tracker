@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
 class TitleController extends AbstractController
@@ -24,10 +25,14 @@ class TitleController extends AbstractController
     {
     }
 
+    // Each filter is optional; an invalid value like ?type=flim is answered with a 400.
     #[Route('/api/titles', name: 'api_title_list', methods: ['GET'])]
-    public function list(): JsonResponse
-    {
-        return $this->json($this->titleRepository->findAllNewestFirst());
+    public function list(
+        #[MapQueryParameter(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] ?TitleType $type = null,
+        #[MapQueryParameter(validationFailedStatusCode: Response::HTTP_BAD_REQUEST)] ?bool $watched = null,
+        #[MapQueryParameter] ?string $search = null,
+    ): JsonResponse {
+        return $this->json($this->titleRepository->findByFilters($type, $watched, $search));
     }
 
     #[Route('/api/titles', name: 'api_title_create', methods: ['POST'])]

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Title;
+use App\Enum\TitleType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,11 +18,27 @@ class TitleRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Title[]
+     * @return Title[] newest first; a null filter is not applied
      */
-    public function findAllNewestFirst(): array
+    public function findByFilters(?TitleType $type, ?bool $watched, ?string $search): array
     {
-        return $this->findBy([], ['id' => 'DESC']);
+        $queryBuilder = $this->createQueryBuilder('title')
+            ->orderBy('title.id', 'DESC');
+
+        // Values always go in through setParameter(), never into the query text, which prevents SQL injection.
+        if (null !== $type) {
+            $queryBuilder->andWhere('title.type = :type')->setParameter('type', $type);
+        }
+        if (null !== $watched) {
+            $queryBuilder->andWhere('title.watched = :watched')->setParameter('watched', $watched);
+        }
+        if (null !== $search && '' !== trim($search)) {
+            // LOWER() on both sides makes the search case-insensitive on every database.
+            $queryBuilder->andWhere('LOWER(title.name) LIKE :search')
+                ->setParameter('search', '%'.mb_strtolower(trim($search)).'%');
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     public function save(Title $title): void

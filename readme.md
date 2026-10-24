@@ -27,7 +27,7 @@ open while you use the app; closing it stops the server.
 
 | Method | Path | What it does | Response |
 |---|---|---|---|
-| GET | `/api/titles` | List all titles, newest first | 200 with a JSON array |
+| GET | `/api/titles` | List titles, newest first. Optional filters: `?type=film` or `series`, `?watched=true` or `false`, `?search=dun` (part of the name, not case-sensitive) | 200 with a JSON array, 400 if a filter value is invalid |
 | POST | `/api/titles` | Add a title | 201 with the new title, 400 with error messages if the input is invalid |
 | PATCH | `/api/titles/{id}` | Switch "watched" on or off, body `{"watched": true}` | 200 with the updated title, 400 if `watched` is not `true` or `false`, 404 if the id does not exist |
 | DELETE | `/api/titles/{id}` | Delete a title | 204, or 404 if the id does not exist |
@@ -69,12 +69,14 @@ field, for example `{"errors": {"year": "The year must be a whole number from 19
   (after a confirmation)
 - Extra: a checkbox on each row to switch "watched" on or off
 - Extra: input validation on the server, with the same limits in the form
+- Extra: filters (type and watched) and a search on the name. The filtering
+  happens in the database query, not in the browser.
 
 ## What is not finished (yet)
 
 - Opening `http://localhost:8000/` shows a Symfony 404 page; the app is at
   `/index.html`.
-- More extras from the assignment. Planned next: filters and a test.
+- More extras from the assignment. Planned next: a test.
 
 ## Problems I ran into
 

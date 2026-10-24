@@ -1,7 +1,9 @@
 // Every HTTP call lives in this object, so the rest of the file never calls fetch() directly.
 const api = {
-    async getTitles() {
-        const response = await fetch('/api/titles');
+    async getTitles(filters) {
+        // Empty filters are left out, so "All" sends nothing and the API does not filter.
+        const query = new URLSearchParams(Object.entries(filters).filter(([, value]) => value !== ''));
+        const response = await fetch(`/api/titles?${query}`);
         // fetch() only fails on network errors, not on a 404 or 500, so the status is checked here.
         if (!response.ok) {
             throw new Error(`Could not load titles (status ${response.status}).`);
@@ -51,6 +53,7 @@ const api = {
 const typeLabels = { film: 'Film', series: 'Series' };
 
 const titleForm = document.getElementById('title-form');
+const filterForm = document.getElementById('filter-form');
 const titleList = document.getElementById('title-list');
 const errorMessage = document.getElementById('error-message');
 
@@ -58,13 +61,13 @@ const errorMessage = document.getElementById('error-message');
 // It matches YEARS_AHEAD in TitleController.
 titleForm.elements.year.max = new Date().getFullYear() + 5;
 
-function renderTitles(titles) {
+function renderTitles(titles, emptyMessage) {
     titleList.replaceChildren();
 
     if (titles.length === 0) {
         const cell = titleList.insertRow().insertCell();
         cell.colSpan = 5;
-        cell.textContent = 'No titles yet.';
+        cell.textContent = emptyMessage;
         return;
     }
 
@@ -100,11 +103,27 @@ function hideError() {
     errorMessage.hidden = true;
 }
 
+function readFilters() {
+    const formData = new FormData(filterForm);
+
+    return {
+        search: formData.get('search').trim(),
+        type: formData.get('type'),
+        watched: formData.get('watched'),
+    };
+}
+
 // Called after every change, so the page always shows what the server has.
 async function loadTitles() {
     hideError();
+    const filters = readFilters();
+    const isFiltered = Object.values(filters).some((value) => value !== '');
+
     try {
-        renderTitles(await api.getTitles());
+        renderTitles(
+            await api.getTitles(filters),
+            isFiltered ? 'No titles match these filters.' : 'No titles yet.',
+        );
     } catch (error) {
         showError(error.message);
     }
@@ -157,5 +176,14 @@ titleForm.addEventListener('submit', async (event) => {
         showError(error.message);
     }
 });
+
+let filterTimer;
+filterForm.addEventListener('input', () => {
+    // Waits until typing pauses, so "Dune" sends one request instead of four.
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(loadTitles, 300);
+});
+// Pressing Enter in the search box would otherwise reload the page.
+filterForm.addEventListener('submit', (event) => event.preventDefault());
 
 loadTitles();

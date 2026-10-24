@@ -39,6 +39,29 @@
         <button type="submit">Add</button>
     </form>
 
+    <form id="filter-form" role="search">
+        <label>
+            Search
+            <input name="search" type="search" placeholder="Name contains...">
+        </label>
+        <label>
+            Type
+            <select name="type">
+                <option value="">All</option>
+                <option value="film">Films</option>
+                <option value="series">Series</option>
+            </select>
+        </label>
+        <label>
+            Watched
+            <select name="watched">
+                <option value="">All</option>
+                <option value="true">Watched</option>
+                <option value="false">Not watched</option>
+            </select>
+        </label>
+    </form>
+
     <p id="error-message" class="error" hidden></p>
 
     <table>
