@@ -5,7 +5,7 @@ I'm being assessed on how I learn and think, so I must understand and be able to
 explain every line in this project.
 
 ## Stack
-- PHP 8.2+, Symfony (see composer.json for the exact version), Doctrine ORM
+- PHP 8.4+, Symfony (see composer.json for the exact version), Doctrine ORM
 - Database: SQLite
 - Frontend: plain HTML and JavaScript (fetch) that talks to a JSON API
 - No extra packages or bundles unless I agree to them first
@@ -28,6 +28,22 @@ explain every line in this project.
 - Never read, print or change .env.local or anything that holds passwords
 - Never delete files or change the database without asking me first
 
-## After each step
-Remind me to update the AI log in README.md (task, what I asked, what I kept,
-changed or rejected) and my time log.
+## Design patterns (follow them in all code)
+- MVC: the `Title` entity is the model, `TitleController` the controller, and the JSON
+  responses plus the HTML/JS in `public/` are the view.
+- Repository: every database read and write goes through `TitleRepository`.
+  Controllers never use the EntityManager directly.
+- Dependency injection: services arrive through autowired constructor or action
+  arguments, never through `new`.
+- Thin controllers: read the request, call the repository, return JSON. No service
+  layer, DTOs or factory classes unless real logic appears that needs them.
+- Fixed values are backed enums (`App\Enum\TitleType`), never loose strings.
+- Always-valid entity: required fields are constructor arguments and there is no
+  setter for the id.
+- One JSON shape: `Title` implements `\JsonSerializable`, and every endpoint returns
+  titles through it.
+- REST routes: `/api/titles` and `/api/titles/{id}`, with status codes 200 (read),
+  201 (created), 204 (deleted), 400 (bad input) and 404 (unknown id).
+- Frontend: all `fetch` calls live in one `api` object in `app.js`; render functions
+  only touch the DOM. After every change, reload the list from the API so the
+  server stays the single source of truth.
