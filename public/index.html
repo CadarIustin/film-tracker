@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Film and Series Tracker</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+        .error { color: #b00020; }
+    </style>
+</head>
+<body>
+    <h1>Film and Series Tracker</h1>
+
+    <p id="error-message" class="error" hidden></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Year</th>
+                <th>Watched</th>
+            </tr>
+        </thead>
+        <tbody id="title-list"></tbody>
+    </table>
+
+    <script src="app.js"></script>
+</body>
+</html>
